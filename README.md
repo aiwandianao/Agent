@@ -1,187 +1,227 @@
-# Dasi Agent
-
-
+# Dasi Agent 项目文档
 
 ## 项目简介
 
-### 概述
+Dasi Agent 是一个集成了 AI 对话、多角色 Agent 工作流、RAG 知识库和 MCP 工具调用的全栈 AI Agent 平台。本项目采用前后端分离架构，基于 Spring Boot 3 + Vue 3 构建。
 
-Dasi Agent 是一个集成了 AI 对话、多角色 Agent 工作流、RAG 知识库和 MCP 工具调用的全栈项目，包含用户端与管理后台两套前端页面，以及基于 DDD 的后端服务。
+## 文档导航
 
-### 技术栈
+### 📖 [技术设计方案.md](./技术设计方案.md)
+详细的项目技术设计文档，包含：
+- 系统架构设计（DDD 分层架构）
+- 核心功能设计（AI 对话、Agent 工作流、RAG、MCP、会话记忆）
+- 数据库设计
+- 技术亮点分析
+- 部署方案
+- 扩展指南
 
-- 前端：Vue 3、Vite、TailwindCSS、Axios、Pinia、vue-router、vue-flow
-- 后端：Spring Boot 3、Java 17、Spring AI、MyBatis、MySQL、PostgreSQL、Redis、Docker
+**适合人群**：架构师、技术负责人、想深入了解项目整体设计的开发者
 
-### 目录结构
+---
+
+### 🛠️ [MCP-Agent-Prompt开发实现指南.md](./MCP-Agent-Prompt开发实现指南.md)
+实战开发指南，重点讲解如何在工作中实现：
+- **MCP 服务开发**：从零创建自定义 MCP 工具
+- **Agent 工作流开发**：设计并实现复杂 Agent 任务流程
+- **记忆模块开发**：使用 ChatMemory 管理会话上下文
+- **Prompt 编写**：遵循最佳实践编写高质量 Prompt
+
+**适合人群**：开发者、AI 工程师、需要在工作中落地 AI Agent 技术的人员
+
+---
+
+## 项目截图
+
+### 聊天界面
+- **01-聊天界面-MCP工具调用示例.png**：展示通过 MCP 工具查询天气的对话界面
+- **05-聊天界面-RAG知识库对话.png**：展示 RAG 增强对话，基于知识库回答问题
+
+### 管理后台
+- **02-FLOW管理界面-Agent列表.png**：展示 Agent 列表和管理界面
+- **03-CONFIG-CANVAS-可视化工作流配置.png**：展示基于 vue-flow 的可视化工作流配置
+- **04-DASHBOARD仪表盘-数据统计.png**：展示数据统计和趋势图表
+- **07-MODEL管理-模型配置界面.png**：展示模型管理界面
+- **08-FLOW配置-Agent工作流详细配置.png**：展示 Agent 工作流详细配置
+
+### 工作流执行
+- **06-WORK工作流-AI文章生成与发布.png**：展示文章生成与发布工作流的执行过程
+
+### 代码结构
+- **09-前端代码结构.png**：展示前端项目的代码组织结构
+
+---
+
+## 快速开始
+
+### 环境要求
+- JDK 17+
+- Node.js 18+
+- MySQL 8.0+
+- PostgreSQL 14+ (带 pgvector 扩展)
+- Redis 6.0+
+
+### 后端启动
+```bash
+cd Agent/backend
+mvn clean install
+cd ai-agent-app
+mvn spring-boot:run
+```
+
+### 前端启动
+```bash
+cd Agent/frontend
+npm install
+npm run dev
+```
+
+### MCP 服务启动
+```bash
+cd Agent/mcp
+./docker-build.sh
+docker-compose up -d
+```
+
+---
+
+## 核心功能
+
+### 1. AI 对话
+- ✅ 普通对话（支持流式/非流式）
+- ✅ RAG 增强对话（知识库问答）
+- ✅ MCP 工具调用对话（外部服务集成）
+- ✅ 会话记忆管理
+
+### 2. Agent 工作流
+- ✅ Loop 策略（循环模式：Analyzer → Performer → Supervisor → Summarizer）
+- ✅ Step 策略（步骤模式：Inspector → Planner → Runner → Replier）
+- ✅ 可视化工作流配置
+- ✅ SSE 实时推送执行进度
+
+### 3. RAG 知识库
+- ✅ 文件上传（支持多种文档格式）
+- ✅ Git 仓库导入
+- ✅ 向量检索（基于 PostgreSQL + pgvector）
+- ✅ 知识库标签隔离
+
+### 4. MCP 服务
+- ✅ 支持 SSE 方式（远程服务）
+- ✅ 支持 STDIO 方式（本地进程）
+- ✅ 动态工具挂载
+- ✅ 内置 5 个 MCP 服务（CSDN、企业微信、高德天气、邮件、博查搜索）
+
+### 5. 管理后台
+- ✅ Dashboard 数据统计
+- ✅ Flow/Agent/Client 管理
+- ✅ Model/API/MCP/Prompt 管理
+- ✅ Session 会话管理
+- ✅ User 用户管理
+
+---
+
+## 技术栈
+
+### 后端
+- Spring Boot 3
+- Java 17
+- Spring AI
+- MyBatis
+- MySQL + PostgreSQL + Redis
+
+### 前端
+- Vue 3
+- Vite
+- TailwindCSS
+- Pinia
+- vue-flow
+
+---
+
+## 项目结构
 
 ```
-.
-├── backend                     # 后端工程
+Agent/
+├── backend/                     # 后端工程
 │   ├── ai-agent-api            # API 层
 │   ├── ai-agent-app            # 应用启动与配置层
 │   ├── ai-agent-domain         # 领域层
 │   ├── ai-agent-infrastructure # 基础设施层
 │   ├── ai-agent-trigger        # 接口适配层
-│   ├── ai-agent-types          # 公共对象层
-│   ├── docs                    # 脚本文件
-│   └── pom.xml                 # Maven 聚合配置
+│   └── ai-agent-types          # 公共对象层
 │
-├── frontend                    # 前端工程
-│   ├── index.html              # 入口 HTML
-│   ├── node_modules            # 依赖目录
-│   ├── package.json            # 前端依赖与脚本定义
-│   ├── postcss.config.js       # PostCSS 配置
-│   ├── public                  # 公共静态资源
-│   ├── src                     # 前端源码目录
-│   ├── tailwind.config.js      # TailwindCSS 配置
-│   └── vite.config.js          # Vite 构建配置
+├── frontend/                    # 前端工程
+│   ├── src/                    # 源码目录
+│   └── package.json            # 依赖配置
 │
-└── mcp                         # MCP 自建服务集合
-    ├── docker-build.sh         # MCP 镜像构建脚本
-    ├── mcp-server-amap         # 高德地图 MCP 服务
-    ├── mcp-server-bocha        # 博查搜索 MCP 服务
-    ├── mcp-server-csdn         # CSDN MCP 服务
-    ├── mcp-server-email        # 邮件发送 MCP 服务
-    └── mcp-server-wecom        # 企业微信 MCP 服务
+└── mcp/                         # MCP 服务集合
+    ├── mcp-server-csdn         # CSDN 文章发布
+    ├── mcp-server-wecom        # 企业微信通知
+    ├── mcp-server-amap         # 高德天气查询
+    ├── mcp-server-email        # 邮件发送
+    └── mcp-server-bocha        # 博查联网搜索
 ```
 
-## 核心功能
+---
 
-### AI 对话
+## 学习路径
 
-- 支持非流式对话（complete）和流式对话（stream）。
-- 对话前增强：通过 `AugmentService` 注入 RAG 检索上下文与 MCP 工具回调。
-- 会话记忆：基于 `sessionId` 透传到 `ChatMemory Advisor`，实现多轮上下文。
-- 参数可控：`temperature`、`presencePenalty`、`maxCompletionTokens`、MCP 列表、RAG 标签均可由前端传入。
-- 数据持久化：Controller 侧统一做用户消息兜底持久化，助手消息按有效输出持久化，便于追溯和后台审计。
+### 1️⃣ 了解项目整体设计
+阅读 [技术设计方案.md](./技术设计方案.md)，理解：
+- 系统架构和分层设计
+- 核心功能的实现原理
+- 技术亮点和最佳实践
 
-### AI 工作
+### 2️⃣ 学习实战开发技能
+阅读 [MCP-Agent-Prompt开发实现指南.md](./MCP-Agent-Prompt开发实现指南.md)，掌握：
+- 如何开发自定义 MCP 服务
+- 如何配置 Agent 工作流
+- 如何使用 ChatMemory 管理会话
+- 如何编写高质量 Prompt
 
-- 支持 SSE 持续输出执行分段结果。
-- 动态策略：通过 `DispatchService` + `ExecuteStrategyFactory`，按 `agentId` 动态选择执行策略。
-- loop 策略：`Analyzer -> Performer -> Supervisor` 多轮循环，直到通过或达到 `maxRound`，最后 `Summarizer` 总结。
-- step 策略：`Inspector -> Planner -> Runner -> Replier` 顺序执行，`Runner` 按步骤重试直到成功或达到 `maxRetry`。
-- 流程可配置：每个角色实际使用的 `clientId`、提示词与顺序由后台 Flow 配置驱动。
-- 结果分段：节点输出按 `sectionType` 包装为统一结构对象，前端可按阶段实时渲染。
+### 3️⃣ 查看截图理解功能
+查看项目截图，直观了解：
+- 前端界面设计
+- 工作流配置方式
+- Agent 执行过程
 
-### RAG
+### 4️⃣ 阅读源码深入理解
+查看关键源码文件：
+- `AiController.java`：AI 对话和工作流执行入口
+- `AugmentService.java`：RAG 和 MCP 增强服务
+- `DispatchService.java`：策略分发服务
+- `ExecuteLoopStrategy.java`：Loop 策略实现
+- `ExecutePerformerNode.java`：Performer 节点实现
 
-- 支持文件上传和 Git 仓库导入。
-- 文档处理链路：`TikaDocumentReader` 读取文档 -> `TokenTextSplitter` 切片 -> 写入 `PgVectorStore`。
-- 标签隔离：每个文档块写入 `knowledge=ragTag` 元数据，实现按知识库标签检索。
-- 检索增强：对话时默认 `topK=5`，命中片段注入系统提示后与用户问题一起发给模型。
+---
 
-### MCP-CLIENT
+## 常见问题
 
-- 支持动态调用和预装配调用两种模式。
-- 动态调用：聊天时前端传入 `mcpIdList`，后端即时创建 MCP Client 并挂载到当前请求。
-- 预装配调用：系统启动后可根据 `armory` 配置自动装配（API、Model、MCP、Advisor、Client），并注册到 Spring 容器。
-- SSE 方式：通过 `HttpClientSseClientTransport` 连接远程 MCP 服务。
-- STDIO 方式：通过 `StdioClientTransport` 启动本地进程并走标准输入输出通信。
-- 统一封装：封装为 `SyncMcpToolCallbackProvider`，挂载到 `ChatClient.toolCallbacks`。
+### Q1: 如何新增一个 MCP 服务？
+参考 [MCP-Agent-Prompt开发实现指南.md](./MCP-Agent-Prompt开发实现指南.md) 第一章，包含完整的创建步骤。
 
-### MCP-SERVER
+### Q2: 如何创建一个新的 Agent？
+参考 [MCP-Agent-Prompt开发实现指南.md](./MCP-Agent-Prompt开发实现指南.md) 第二章，包含详细的配置流程。
 
-- `mcp-server-csdn`（默认端口 `9001`）：工具 `saveArticle`，发布文章到 CSDN；关键入参 `title`、`markdownContent`。
-- `mcp-server-wecom`（默认端口 `9002`）：工具 `sendText`、`sendTextCard`，发送企业微信应用消息；关键入参 `content` 或 `title/description/url`。
-- `mcp-server-amap`（默认端口 `9003`）：工具 `checkWeather`，根据地址查询天气；关键入参 `address`
-- `mcp-server-email`（默认端口 `9004`）：工具 `sendEmail`，发送邮件通知；关键入参 `to`、`subject`、`content`、`html`。
-- `mcp-server-bocha`（默认端口 `9005`）：工具 `webSearch`，联网搜索；关键入参 `query`、`freshness`。
+### Q3: ChatMemory 如何使用？
+参考 [MCP-Agent-Prompt开发实现指南.md](./MCP-Agent-Prompt开发实现指南.md) 第三章，包含基本用法和配置。
 
+### Q4: Prompt 如何优化？
+参考 [MCP-Agent-Prompt开发实现指南.md](./MCP-Agent-Prompt开发实现指南.md) 第四章，包含编写原则和调优技巧。
 
-### ADMIN 管理后台
+---
 
-- 支持管理员在线对核心配置做 CRUD 与状态切换（启用/禁用）。
-- 通用管理页面：`api`、`model`、`mcp`、`advisor`、`prompt`、`client`、`agent`、`task`、`user`。
-- 特殊页面 `Dashboard`：总量统计、消息趋势（7d/30d）、chat/work 使用分布、Top 使用排行；支持自动刷新，同时支持右上角手动刷新按钮。
-- 特殊页面 `Config`：按 `clientId` 分组管理配置项（`prompt/advisor/mcp` 等）。
-- 特殊页面 `Flow`：按 Agent 类型（loop/step）维护角色链路与顺序。
-- 特殊页面 `Canvas`：基于 `vue-flow` 的可视化流程画布，展示 Agent 与 Client 的连接关系。
-- 特殊页面 `Session`：按会话类型查看 `chat/work` 历史消息与执行卡片。
-- 分页策略：通用管理页统一使用 `PageResult`（`pageNum/pageSize/total/pageSum`）进行分页查询。
-- 权限控制：`/admin/*` 路由要求管理员登录，非 admin 角色不可访问。
+## 贡献指南
 
-## 页面展示
+欢迎提交 Issue 和 Pull Request！
 
-### 首页
+---
 
-![image-20260213114200034](./assets/image-20260213114200034.png)
+## 许可证
 
-![image-20260213120205084](./assets/image-20260213120205084.png)
+MIT License
 
-### Chat 对话
+---
 
-#### 普通对话
+## 联系方式
 
-![image-20260212165822929](./assets/image-20260212165822929.png)
-
-#### RAG 对话
-
-![image-20260212170152042](./assets/image-20260212170152042.png)
-
-![image-20260212182609418](./assets/image-20260212182609418.png)
-
-#### MCP 对话
-
-![image-20260212182749683](./assets/image-20260212182749683.png)
-
-![image-20260212182922052](./assets/image-20260212182922052.png)
-
-### AGENT 对话
-
-#### AMAP + EMAIL
-
-![image-20260212184929850](./assets/image-20260212184929850.png)
-
-<img src="./assets/IMG_0093.PNG" alt="IMG_0093" style="zoom: 33%;" />
-
-#### CSDN + WECOM
-
-![image-20260212185834327](./assets/image-20260212185834327.png)
-
-![image-20260212185944249](./assets/image-20260212185944249.png)
-
-<img src="./assets/IMG_0094.PNG" alt="IMG_0094" style="zoom: 33%;" />
-
-#### BOCHA + WECOM
-
-![image-20260213034054539](./assets/image-20260213034054539.png)
-
-<img src="./assets/IMG_0095.PNG" alt="IMG_0095" style="zoom: 33%;" />
-
-### ADMIN 后台
-
-#### 仪表盘
-
-![image-20260213124223004](./assets/image-20260213124223004.png)
-
-![image-20260213124401589](./assets/image-20260213124401589.png)
-
-#### 工作流管理
-
-![image-20260213124714732](./assets/image-20260213124714732.png)
-
-![image-20260213124759820](./assets/image-20260213124759820.png)
-
-![image-20260213124831899](./assets/image-20260213124831899.png)
-
-![image-20260213124728232](./assets/image-20260213124728232.png)
-
-#### 服务管理
-
-![image-20260213124443407](./assets/image-20260213124443407.png)
-
-![image-20260213124512567](./assets/image-20260213124512567.png)
-
-#### 模型管理
-
-![image-20260213124536607](./assets/image-20260213124536607.png)
-
-![image-20260213124547530](./assets/image-20260213124547530.png)
-
-#### 会话管理
-
-![image-20260213124640237](./assets/image-20260213124640237.png)
-
-![image-20260213124648168](./assets/image-20260213124648168.png)
+如有问题，请提交 Issue 或联系项目维护者。
